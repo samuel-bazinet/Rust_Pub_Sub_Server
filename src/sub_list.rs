@@ -3,18 +3,23 @@ use crate::error_types::SubListErrors;
 use std::collections::{HashMap, HashSet};
 
 pub struct SubscriptionManager {
-    identifier_map: HashMap<usize, HashSet<&'static str>>
+    identifier_map: HashMap<usize, HashSet<&'static str>>,
 }
 
 impl SubscriptionManager {
     /// Create new SubscriptionManager to be used by the program
     pub fn new() -> Self {
-        SubscriptionManager { identifier_map: HashMap::new() }
+        SubscriptionManager {
+            identifier_map: HashMap::new(),
+        }
     }
 
     /// Add a new subscription to the SubscriptionManager
-    pub fn add_subscription(&mut self, message_id: usize, process: &'static str) -> Result<(), SubListErrors> {
-
+    pub fn add_subscription(
+        &mut self,
+        message_id: usize,
+        process: &'static str,
+    ) -> Result<(), SubListErrors> {
         if let Some(values) = self.identifier_map.get_mut(&message_id) {
             let result = values.insert(process);
             if !result {
@@ -31,10 +36,13 @@ impl SubscriptionManager {
     }
 
     /// Retrieves the subscribers to the provided message ID
-    pub fn get_subscribers(& self, message_id: usize) -> Result<&HashSet<&'static str>, SubListErrors> {
+    pub fn get_subscribers(
+        &self,
+        message_id: usize,
+    ) -> Result<&HashSet<&'static str>, SubListErrors> {
         match self.identifier_map.get(&message_id) {
             Some(sub) => Ok(sub),
-            None => Err(SubListErrors::NoSubscriptionFound)
+            None => Err(SubListErrors::NoSubscriptionFound),
         }
     }
 }
@@ -65,7 +73,7 @@ mod tests {
         assert!(result.unwrap() == ());
         assert_eq!(list.identifier_map.len(), 1);
     }
-    
+
     #[test]
     fn test_can_add_two_sub() {
         let mut list = SubscriptionManager::new();
@@ -91,7 +99,10 @@ mod tests {
         let result = list.add_subscription(message_id, process);
 
         assert!(result.is_err());
-        assert_eq!(result.err().unwrap(), SubListErrors::SubscriptionAlreadyPresent);
+        assert_eq!(
+            result.err().unwrap(),
+            SubListErrors::SubscriptionAlreadyPresent
+        );
         assert_eq!(list.identifier_map.get(&message_id).unwrap().len(), 1);
     }
 
@@ -114,7 +125,11 @@ mod tests {
         let message_id = 1;
         let result = list.get_subscribers(message_id);
         if let Err(error) = result {
-            assert_eq!(error, SubListErrors::NoSubscriptionFound, "The wrong Error value was returned");
+            assert_eq!(
+                error,
+                SubListErrors::NoSubscriptionFound,
+                "The wrong Error value was returned"
+            );
         } else {
             assert!(false);
         }
