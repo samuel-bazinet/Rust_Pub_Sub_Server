@@ -3,7 +3,7 @@ use crate::error_types::SubListErrors;
 use std::collections::{HashMap, HashSet};
 
 pub struct SubscriptionManager {
-    identifier_map: HashMap<u64, HashSet<&'static str>>
+    identifier_map: HashMap<usize, HashSet<&'static str>>
 }
 
 impl SubscriptionManager {
@@ -13,7 +13,7 @@ impl SubscriptionManager {
     }
 
     /// Add a new subscription to the SubscriptionManager
-    pub fn add_subscription(&mut self, message_id: u64, process: &'static str) -> Result<(), SubListErrors> {
+    pub fn add_subscription(&mut self, message_id: usize, process: &'static str) -> Result<(), SubListErrors> {
 
         if let Some(values) = self.identifier_map.get_mut(&message_id) {
             let result = values.insert(process);
@@ -28,6 +28,20 @@ impl SubscriptionManager {
             self.identifier_map.insert(message_id, set);
             Ok(())
         }
+    }
+
+    /// Retrieves the subscribers to the provided message ID
+    pub fn get_subscribers(& self, message_id: usize) -> Result<&HashSet<&'static str>, SubListErrors> {
+        match self.identifier_map.get(&message_id) {
+            Some(sub) => Ok(sub),
+            None => Err(SubListErrors::NoSubscriptionFound)
+        }
+    }
+}
+
+impl Default for SubscriptionManager {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -79,5 +93,30 @@ mod tests {
         assert!(result.is_err());
         assert_eq!(result.err().unwrap(), SubListErrors::SubscriptionAlreadyPresent);
         assert_eq!(list.identifier_map.get(&message_id).unwrap().len(), 1);
+    }
+
+    #[test]
+    fn test_get_subscriber() {
+        let mut list = SubscriptionManager::new();
+        let message_id = 1;
+        let process = "test";
+        let result = list.add_subscription(message_id, process);
+        assert!(result.is_ok());
+
+        let result = list.get_subscribers(message_id);
+        assert!(result.is_ok());
+        assert!(result.unwrap().contains(process));
+    }
+
+    #[test]
+    fn test_get_subscriber_not_present() {
+        let list = SubscriptionManager::new();
+        let message_id = 1;
+        let result = list.get_subscribers(message_id);
+        if let Err(error) = result {
+            assert_eq!(error, SubListErrors::NoSubscriptionFound, "The wrong Error value was returned");
+        } else {
+            assert!(false);
+        }
     }
 }
