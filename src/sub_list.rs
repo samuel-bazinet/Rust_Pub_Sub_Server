@@ -1,9 +1,14 @@
 use crate::error_types::SubListErrors;
 
-use std::collections::{HashMap, HashSet};
+use std::{
+    collections::{HashMap, HashSet},
+    net::SocketAddr,
+};
+
+type MessageId = usize;
 
 pub struct SubscriptionManager {
-    identifier_map: HashMap<usize, HashSet<&'static str>>,
+    identifier_map: HashMap<MessageId, HashSet<SocketAddr>>,
 }
 
 impl SubscriptionManager {
@@ -17,8 +22,8 @@ impl SubscriptionManager {
     /// Add a new subscription to the SubscriptionManager
     pub fn add_subscription(
         &mut self,
-        message_id: usize,
-        process: &'static str,
+        message_id: MessageId,
+        process: SocketAddr,
     ) -> Result<(), SubListErrors> {
         if let Some(values) = self.identifier_map.get_mut(&message_id) {
             let result = values.insert(process);
@@ -38,10 +43,10 @@ impl SubscriptionManager {
     /// Retrieves the subscribers to the provided message ID
     pub fn get_subscribers(
         &self,
-        message_id: usize,
-    ) -> Result<&HashSet<&'static str>, SubListErrors> {
+        message_id: MessageId,
+    ) -> Result<Vec<&SocketAddr>, SubListErrors> {
         match self.identifier_map.get(&message_id) {
-            Some(sub) => Ok(sub),
+            Some(sub) => Ok(sub.into_iter().collect()),
             None => Err(SubListErrors::NoSubscriptionFound),
         }
     }
@@ -55,6 +60,8 @@ impl Default for SubscriptionManager {
 
 #[cfg(test)]
 mod tests {
+    use std::net::{Ipv4Addr, SocketAddrV4};
+
     use super::*;
 
     #[test]
@@ -67,7 +74,7 @@ mod tests {
     fn test_can_add_sub() {
         let mut list = SubscriptionManager::new();
         let message_id = 1;
-        let process = "test";
+        let process = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 8080));
         let result = list.add_subscription(message_id, process);
 
         assert!(result.unwrap() == ());
@@ -78,10 +85,10 @@ mod tests {
     fn test_can_add_two_sub() {
         let mut list = SubscriptionManager::new();
         let message_id = 1;
-        let process = "test";
+        let process = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 8080));
         let result = list.add_subscription(message_id, process);
         assert!(result.is_ok());
-        let process = "test2";
+        let process = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 8081));
         let result = list.add_subscription(message_id, process);
 
         assert!(result.is_ok());
@@ -92,10 +99,10 @@ mod tests {
     fn test_error_duplicate_sub() {
         let mut list = SubscriptionManager::new();
         let message_id = 1;
-        let process = "test";
+        let process = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 8080));
         let result = list.add_subscription(message_id, process);
         assert!(result.is_ok());
-        let process = "test";
+        let process = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 8080));
         let result = list.add_subscription(message_id, process);
 
         assert!(result.is_err());
@@ -110,13 +117,13 @@ mod tests {
     fn test_get_subscriber() {
         let mut list = SubscriptionManager::new();
         let message_id = 1;
-        let process = "test";
+        let process = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 8080));
         let result = list.add_subscription(message_id, process);
         assert!(result.is_ok());
 
         let result = list.get_subscribers(message_id);
         assert!(result.is_ok());
-        assert!(result.unwrap().contains(process));
+        assert!(result.unwrap().contains(&&process));
     }
 
     #[test]
