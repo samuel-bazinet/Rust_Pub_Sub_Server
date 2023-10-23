@@ -4,7 +4,7 @@ use std::{error::Error, fmt::Display};
 pub enum SetupErrors {
     CannotReadConfigFile,
     CannotFindConfigFile,
-    InvalidConfigFileFormat,
+    InvalidConfigFileKey,
     InvalidSocketAddress,
 }
 
@@ -17,8 +17,8 @@ impl Display for SetupErrors {
                 write!(f, "The config file cannot be read ."),
             SetupErrors::CannotFindConfigFile => 
                 write!(f, "The path to the condifg file cannot be found."),
-            SetupErrors::InvalidConfigFileFormat => 
-                write!(f, "The config file was inproperly formated."),
+            SetupErrors::InvalidConfigFileKey => 
+                write!(f, "The config file does not have the right keys."),
             SetupErrors::InvalidSocketAddress =>
                 write!(f, "The address in the config file is not formatted properly.")
         }

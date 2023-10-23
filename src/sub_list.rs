@@ -52,7 +52,7 @@ impl SubscriptionManager {
         message_id: MessageId,
     ) -> Result<Vec<&SocketAddr>, SubListErrors> {
         match self.identifier_map.get(&message_id) {
-            Some(sub) => Ok(sub.into_iter().collect()),
+            Some(sub) => Ok(sub.iter().collect()),
             None => Err(SubListErrors::NoSubscriptionFound),
         }
     }

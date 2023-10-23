@@ -33,7 +33,7 @@ fn get_socket_address_from_json(config: Value) -> Result<PubSubConfigs, SetupErr
     if let Some(socket_string) = config["addr"].as_str() {
         get_socket_address_from_str(socket_string)
     } else {
-        Err(SetupErrors::InvalidConfigFileFormat)
+        Err(SetupErrors::InvalidConfigFileKey)
     }
 }
 
@@ -60,7 +60,63 @@ mod tests {
 
     #[test]
     fn test_setup_server_returns_configs() {
-        let result = setup_server(constants::test_resource_path("test.json").as_str());
+        let result = setup_server(constants::test_resource_path("test_valid_config.json").as_str());
         assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_setup_server_returns_invalid_socket() {
+        let result = setup_server(constants::test_resource_path("test_invalid_config_socket.json").as_str());
+        if let Err(err_val) = result {
+            assert_eq!(
+                err_val,
+                SetupErrors::InvalidSocketAddress,
+                "The wrong enum value was used"
+            )
+        } else {
+            assert!(false, "The function did not fail as expected")
+        }
+    }
+
+    #[test]
+    fn test_setup_server_returns_invalid_config_key() {
+        let result = setup_server(constants::test_resource_path("test_invalid_config_key.json").as_str());
+        if let Err(err_val) = result {
+            assert_eq!(
+                err_val,
+                SetupErrors::InvalidConfigFileKey,
+                "The wrong enum value was used"
+            )
+        } else {
+            assert!(false, "The function did not fail as expected")
+        }
+    }
+
+    #[test]
+    fn test_setup_server_returns_invalid_config_format() {
+        let result = setup_server(constants::test_resource_path("test_invalid_config_format").as_str());
+        if let Err(err_val) = result {
+            assert_eq!(
+                err_val,
+                SetupErrors::CannotReadConfigFile,
+                "The wrong enum value was used"
+            )
+        } else {
+            assert!(false, "The function did not fail as expected")
+        }
+    }
+
+    #[test]
+    fn test_setup_server_returns_invalid_config_file() {
+        let result = setup_server(constants::test_resource_path("").as_str());
+        if let Err(err_val) = result {
+            assert_eq!(
+                err_val,
+                SetupErrors::CannotFindConfigFile,
+                "The wrong enum value was used"
+            )
+        } else {
+            assert!(false, "The function did not fail as expected")
+        }
     }
 }
