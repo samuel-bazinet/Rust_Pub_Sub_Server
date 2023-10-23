@@ -12,11 +12,11 @@ impl Display for SubListErrors {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             SubListErrors::SubscriptionAlreadyPresent => {
-                write!(f, "The subscription was already added to the list")
+                write!(f, "The subscription was already added to the list.")
             }
             SubListErrors::NoSubscriptionFound => write!(
                 f,
-                "The provided message ID did not match any known subscription"
+                "The provided message ID did not match any known subscription."
             ),
         }
     }
