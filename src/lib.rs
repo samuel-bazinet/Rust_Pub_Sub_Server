@@ -1,122 +1,39 @@
-use std::{fs::read_to_string, net::SocketAddr, str::FromStr};
-
 mod configs;
 mod constants;
 mod error_types;
 mod sub_list;
 
-use configs::PubSubConfigs;
-use error_types::SetupErrors;
+use std::net::UdpSocket;
 
-use serde_json::Value;
-
-///
-/// Sets up the server. Reads a JSON file where the app settings are defined.
-///
-pub fn setup_server(config_file: &str) -> Result<PubSubConfigs, SetupErrors> {
-    if let Ok(file_content) = read_to_string(config_file) {
-        get_config_from_file_string(file_content)
-    } else {
-        Err(SetupErrors::CannotFindConfigFile)
-    }
-}
-
-fn get_config_from_file_string(file_content: String) -> Result<PubSubConfigs, SetupErrors> {
-    if let Ok(config) = serde_json::from_str::<Value>(&file_content) {
-        get_socket_address_from_json(config)
-    } else {
-        Err(SetupErrors::CannotReadConfigFile)
-    }
-}
-
-fn get_socket_address_from_json(config: Value) -> Result<PubSubConfigs, SetupErrors> {
-    if let Some(socket_string) = config["addr"].as_str() {
-        get_socket_address_from_str(socket_string)
-    } else {
-        Err(SetupErrors::InvalidConfigFileKey)
-    }
-}
-
-fn get_socket_address_from_str(socket_string: &str) -> Result<PubSubConfigs, SetupErrors> {
-    if let Ok(socket_address) = SocketAddr::from_str(socket_string) {
-        Ok(PubSubConfigs {
-            addr: socket_address,
-        })
-    } else {
-        Err(SetupErrors::InvalidSocketAddress)
-    }
-}
+pub use configs::setup_server;
 
 ///
 /// Starts listening to the configured port.
 ///
-pub fn start_listening() -> ! {
-    todo!()
+pub fn start_listening(config: configs::PubSubConfigs) -> ! {
+    if let Ok(udp_socket) = UdpSocket::bind(config.addr) {
+        let mut buffer = [0u8;constants::BUFFER_SIZE];
+        loop {
+            if let Ok((size, src)) = udp_socket.recv_from(&mut buffer) {
+                let partial_buf = &buffer[..size];
+                todo!("Make function to parse bytes and determine if message or new subscriptions")
+            } else {
+                todo!("Replace with error enum for unable to receive")
+            }
+        }
+    } else {
+        todo!("Replace with error enum for unable to bind")
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    #[test]
-    fn test_setup_server_returns_configs() {
-        let result = setup_server(constants::test_resource_path("test_valid_config.json").as_str());
-        assert!(result.is_ok());
-    }
 
     #[test]
-    fn test_setup_server_returns_invalid_socket() {
-        let result = setup_server(constants::test_resource_path("test_invalid_config_socket.json").as_str());
-        if let Err(err_val) = result {
-            assert_eq!(
-                err_val,
-                SetupErrors::InvalidSocketAddress,
-                "The wrong enum value was used"
-            )
-        } else {
-            assert!(false, "The function did not fail as expected")
-        }
-    }
-
-    #[test]
-    fn test_setup_server_returns_invalid_config_key() {
-        let result = setup_server(constants::test_resource_path("test_invalid_config_key.json").as_str());
-        if let Err(err_val) = result {
-            assert_eq!(
-                err_val,
-                SetupErrors::InvalidConfigFileKey,
-                "The wrong enum value was used"
-            )
-        } else {
-            assert!(false, "The function did not fail as expected")
-        }
-    }
-
-    #[test]
-    fn test_setup_server_returns_invalid_config_format() {
-        let result = setup_server(constants::test_resource_path("test_invalid_config_format").as_str());
-        if let Err(err_val) = result {
-            assert_eq!(
-                err_val,
-                SetupErrors::CannotReadConfigFile,
-                "The wrong enum value was used"
-            )
-        } else {
-            assert!(false, "The function did not fail as expected")
-        }
-    }
-
-    #[test]
-    fn test_setup_server_returns_invalid_config_file() {
-        let result = setup_server(constants::test_resource_path("").as_str());
-        if let Err(err_val) = result {
-            assert_eq!(
-                err_val,
-                SetupErrors::CannotFindConfigFile,
-                "The wrong enum value was used"
-            )
-        } else {
-            assert!(false, "The function did not fail as expected")
-        }
+    fn test_start_listening() {
+        let config = setup_server(constants::test_resource_path("test_valid_config.json").as_str()).unwrap();
+        start_listening(config);
     }
 }
