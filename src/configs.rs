@@ -1,6 +1,10 @@
 use std::{fs::read_to_string, net::SocketAddr, str::FromStr};
 
-use crate::{constants::test_resource_path, error_types::SetupErrors};
+#[cfg(test)]
+use crate::constants::test_resource_path;
+
+use crate::
+    error_types::SetupErrors;
 
 use serde_json::Value;
 
