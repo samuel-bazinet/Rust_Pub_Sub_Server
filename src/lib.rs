@@ -22,7 +22,6 @@ pub fn start_listening(config: configs::PubSubConfigs) -> Result<(), ListeningEr
             if let Ok((size, src)) = udp_socket.recv_from(&mut buffer) {
                 let partial_buf = &buffer[..size];
                 message_processor::process_message(partial_buf, src, &mut subscription_manager.lock().unwrap());
-                todo!("Make function to parse bytes and determine if message or new subscriptions. Will need a thread pool.")
             } else {
                 error = ListeningErrors::UnableToReceive;
                 todo!("Add a logger to log the error then exit the program")
