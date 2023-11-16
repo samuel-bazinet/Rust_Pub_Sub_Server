@@ -1,10 +1,13 @@
 mod configs;
 mod constants;
 mod error_types;
-mod sub_list;
 mod message_processor;
+mod sub_list;
 
-use std::{net::UdpSocket, sync::{Mutex, Arc}};
+use std::{
+    net::UdpSocket,
+    sync::{Arc, Mutex},
+};
 
 pub use configs::setup_server;
 use error_types::ListeningErrors;
@@ -16,12 +19,16 @@ use sub_list::SubscriptionManager;
 pub fn start_listening(config: configs::PubSubConfigs) -> Result<(), ListeningErrors> {
     let mut error;
     if let Ok(udp_socket) = UdpSocket::bind(config.addr) {
-        let mut buffer = [0u8;constants::BUFFER_SIZE];
-        let subscription_manager = Arc::new(Mutex::new(SubscriptionManager::new())); 
+        let mut buffer = [0u8; constants::BUFFER_SIZE];
+        let subscription_manager = Arc::new(Mutex::new(SubscriptionManager::new()));
         loop {
             if let Ok((size, src)) = udp_socket.recv_from(&mut buffer) {
                 let partial_buf = &buffer[..size];
-                message_processor::process_message(partial_buf, src, &mut subscription_manager.lock().unwrap());
+                message_processor::process_message(
+                    partial_buf,
+                    src,
+                    &mut subscription_manager.lock().unwrap(),
+                );
             } else {
                 error = ListeningErrors::UnableToReceive;
                 todo!("Add a logger to log the error then exit the program")
@@ -37,10 +44,10 @@ pub fn start_listening(config: configs::PubSubConfigs) -> Result<(), ListeningEr
 mod tests {
     use super::*;
 
-
     #[test]
     fn test_start_listening() {
-        let config = setup_server(constants::test_resource_path("test_valid_config.json").as_str()).unwrap();
+        let config =
+            setup_server(constants::test_resource_path("test_valid_config.json").as_str()).unwrap();
         start_listening(config);
     }
 }

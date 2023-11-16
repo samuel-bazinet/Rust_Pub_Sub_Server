@@ -3,8 +3,7 @@ use std::{fs::read_to_string, net::SocketAddr, str::FromStr};
 #[cfg(test)]
 use crate::constants::test_resource_path;
 
-use crate::
-    error_types::SetupErrors;
+use crate::error_types::SetupErrors;
 
 use serde_json::Value;
 
@@ -72,8 +71,7 @@ mod tests {
 
     #[test]
     fn test_setup_server_returns_invalid_socket() {
-        let result =
-            setup_server(test_resource_path("test_invalid_config_socket.json").as_str());
+        let result = setup_server(test_resource_path("test_invalid_config_socket.json").as_str());
         if let Err(err_val) = result {
             assert_eq!(
                 err_val,
@@ -87,8 +85,7 @@ mod tests {
 
     #[test]
     fn test_setup_server_returns_invalid_config_key() {
-        let result =
-            setup_server(test_resource_path("test_invalid_config_key.json").as_str());
+        let result = setup_server(test_resource_path("test_invalid_config_key.json").as_str());
         if let Err(err_val) = result {
             assert_eq!(
                 err_val,
@@ -102,8 +99,7 @@ mod tests {
 
     #[test]
     fn test_setup_server_returns_invalid_config_format() {
-        let result =
-            setup_server(test_resource_path("test_invalid_config_format").as_str());
+        let result = setup_server(test_resource_path("test_invalid_config_format").as_str());
         if let Err(err_val) = result {
             assert_eq!(
                 err_val,

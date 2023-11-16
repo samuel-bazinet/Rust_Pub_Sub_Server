@@ -14,7 +14,7 @@ pub struct SubscriptionManager {
 impl SubscriptionManager {
     ///
     /// Create new SubscriptionManager to be used by the program
-    /// 
+    ///
     pub fn new() -> Self {
         SubscriptionManager {
             identifier_map: HashMap::new(),
@@ -23,7 +23,7 @@ impl SubscriptionManager {
 
     ///
     /// Add a new subscription to the SubscriptionManager
-    /// 
+    ///
     pub fn add_subscription(
         &mut self,
         message_id: MessageId,
@@ -46,7 +46,7 @@ impl SubscriptionManager {
 
     ///
     /// Retrieves the subscribers to the provided message ID
-    /// 
+    ///
     pub fn get_subscribers(
         &self,
         message_id: MessageId,
