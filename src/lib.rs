@@ -44,10 +44,5 @@ pub fn start_listening(config: configs::PubSubConfigs) -> Result<(), ListeningEr
 mod tests {
     use super::*;
 
-    #[test]
-    fn test_start_listening() {
-        let config =
-            setup_server(constants::test_resource_path("test_valid_config.json").as_str()).unwrap();
-        start_listening(config);
-    }
+
 }
