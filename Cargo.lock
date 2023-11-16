@@ -38,7 +38,7 @@ dependencies = [
 [[package]]
 name = "rpss_utils"
 version = "0.1.0"
-source = "git+https://github.com/samuel-bazinet/rpss_utils?branch=main#c95ac884123294e182dda4165eb30723c6875378"
+source = "git+https://github.com/samuel-bazinet/rpss_utils?branch=main#e16f52a726fd4d011bda9bb147e44d36b81b0797"
 
 [[package]]
 name = "ryu"

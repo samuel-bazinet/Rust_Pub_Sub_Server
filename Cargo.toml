@@ -8,4 +8,4 @@ edition = "2021"
 [dependencies]
 serde = {version = "1.0", features = ["derive"]}
 serde_json = "1.0"
-rpss_utils = {git = "https://github.com/samuel-bazinet/rpss_utils", branch = "main" }
+rpss_utils = {git = "https://github.com/samuel-bazinet/rpss_utils", branch = "main", features = ["server"] }
