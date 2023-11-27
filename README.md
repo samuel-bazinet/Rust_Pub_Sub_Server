@@ -2,7 +2,7 @@
 
 This is a pub-sub server made with the intention of being simple to use.
 
-It is meant to be used as a library, but is no wrappiong is necessary it can be downloaded and ran as an executable.
+It is meant to be used as a library, but if no wrapping is necessary it can be downloaded and ran as an executable.
 
 This package depends on the [rpss_util](https://github.com/samuel-bazinet/rpss_utils) repo; this repo also holds functions that are useful to interact with the server from a client (WIP). 
 
