@@ -15,9 +15,10 @@ pub struct PubSubConfigs {
 /// Sets up the server. Reads a JSON file where the app settings are defined.
 ///
 ///  ## Example:
-/// ```
-/// let config = setup_server("configs/configs.json");
-/// start_listening(config)
+/// ```no_run
+/// # use pub_sub_server::*;
+/// let config = setup_server("configs/configs.json").unwrap();
+/// start_listening(config);
 /// ```
 /// 
 pub fn setup_server(config_file: &str) -> Result<PubSubConfigs, SetupErrors> {
