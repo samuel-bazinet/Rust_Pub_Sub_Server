@@ -4,7 +4,7 @@ This is a pub-sub server built in Rust meant to be simple to use.
 
 It is meant to be used as a library but can be downloaded and ran as an executable if no wrapping is necessary. 
 
-A currently WIP utilities [rpss_util](https://github.com/samuel-bazinet/rpss_utils) is depended on by this package and holds functions that are useful to interact with the server from a client. 
+A utilities [rpss_util](https://github.com/samuel-bazinet/rpss_utils) repo is depended on by this package and holds functions that are useful to interact with the server from a client (WIP). 
 
 ## How to use the executable
 
