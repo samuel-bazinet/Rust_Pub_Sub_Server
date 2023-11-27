@@ -15,6 +15,12 @@ use sub_list::SubscriptionManager;
 
 ///
 /// Starts listening to the configured port.
+/// 
+/// ## Example:
+/// ```
+/// let config = setup_server("configs/configs.json");
+/// start_listening(config)
+/// ```
 ///
 pub fn start_listening(config: configs::PubSubConfigs) -> Result<(), ListeningErrors> {
     let mut error;
