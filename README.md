@@ -1,10 +1,20 @@
 # Rust Pub-Sub Server
 
-This is a pub-sub server built in Rust meant to be simple to use. 
+This is a pub-sub server made with the intention of being simple to use.
 
-It is meant to be used as a library but can be downloaded and ran as an executable if no wrapping is necessary. 
+It is meant to be used as a library, but is no wrappiong is necessary it can be downloaded and ran as an executable.
 
-A utilities [rpss_util](https://github.com/samuel-bazinet/rpss_utils) repo is depended on by this package and holds functions that are useful to interact with the server from a client (WIP). 
+This package depends on the [rpss_util](https://github.com/samuel-bazinet/rpss_utils) repo; this repo also holds functions that are useful to interact with the server from a client (WIP). 
+
+## How to use as a library
+
+1. Include the repo as a dependency of your Rust project.
+
+2. Use the `setup_server(config_file)` function to generate the configs to be used by the server (See `./configs/configs.json` as an example for a config file).
+
+3. Use the `start_listening(config)` function to start listening.
+
+4. Running your program should now have it work as a Pub-Sub Server.
 
 ## How to use the executable
 
@@ -19,16 +29,6 @@ A utilities [rpss_util](https://github.com/samuel-bazinet/rpss_utils) repo is de
         1. If Rust is not installed, download [here](https://www.rust-lang.org/learn/get-started).
     
 4. Server should be running.
-
-## How to use as a library
-
-1. Include the repo as a dependency of your Rust project.
-
-2. Use the `setup_server(config_file)` function to generate the configs to be used by the server (See `./configs/configs.json` as an example for a config file).
-
-3. Use the `start_listening(config)` function to start listening.
-
-4. Running your program should now have it work as a Pub-Sub Server.
 
 ## How to access from the client
 
