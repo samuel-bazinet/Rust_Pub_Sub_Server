@@ -11,7 +11,7 @@ pub fn process_message(message: &[u8], src: SocketAddr, sub_manager: &mut Subscr
                 if let Err(error) =
                     sub_manager.add_subscription(usize::from_le_bytes(message_id_bytes), src)
                 {
-                    todo!("Deal with error")
+                    todo!("Deal with error. This should be where a logger would make sense as this won't stop the program from working")
                 }
             } else {
                 todo!("Make error for invalid conversion")

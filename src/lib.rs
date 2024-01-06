@@ -24,7 +24,6 @@ use sub_list::SubscriptionManager;
 /// ```
 ///
 pub fn start_listening(config: configs::PubSubConfigs) -> Result<(), ListeningErrors> {
-    let mut error;
     if let Ok(udp_socket) = UdpSocket::bind(config.addr) {
         let mut buffer = [0u8; constants::BUFFER_SIZE];
         let subscription_manager = Arc::new(Mutex::new(SubscriptionManager::new()));
@@ -37,19 +36,33 @@ pub fn start_listening(config: configs::PubSubConfigs) -> Result<(), ListeningEr
                     &mut subscription_manager.lock().unwrap(),
                 );
             } else {
-                error = ListeningErrors::UnableToReceive;
-                todo!("Add a logger to log the error then exit the program")
+                return Err(ListeningErrors::UnableToReceive);
             }
         }
     } else {
-        error = ListeningErrors::UnableToBind;
-        todo!("Add a logger to log the error then exit the program")
+        return Err(ListeningErrors::UnableToBind);
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use std::net::{Ipv4Addr, SocketAddrV4, SocketAddr};
+
     use super::*;
 
+    #[test]
+    fn start_listening_unbindable() {
+        let config = configs::PubSubConfigs{addr: SocketAddr::from(SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 1))};
+        let result = start_listening(config);
+        if let Err(e) = result {
+            assert_eq!(e, ListeningErrors::UnableToBind, "The wrong error was returned");
+        } else {
+            assert!(false, "Code was meant to return an error")
+        }
+    }
 
+    #[test]
+    fn start_listening_cant_receive() {
+        
+    }
 }
