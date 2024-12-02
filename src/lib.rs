@@ -40,7 +40,7 @@ pub fn start_listening(config: configs::PubSubConfigs) -> Result<(), ListeningEr
             }
         }
     } else {
-        return Err(ListeningErrors::UnableToBind);
+        Err(ListeningErrors::UnableToBind)
     }
 }
 
