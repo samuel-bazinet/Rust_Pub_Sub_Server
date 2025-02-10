@@ -29,6 +29,7 @@ impl SubscriptionManager {
         message_id: MessageId,
         process: SocketAddr,
     ) -> Result<(), SubListErrors> {
+        log::debug!("Adding {process} to the {message_id} subscriber list");
         if let Some(values) = self.identifier_map.get_mut(&message_id) {
             let result = values.insert(process);
             if !result {
@@ -37,6 +38,7 @@ impl SubscriptionManager {
                 Ok(())
             }
         } else {
+            log::debug!("Creating {message_id} subscriber list");
             let mut set = HashSet::new();
             set.insert(process);
             self.identifier_map.insert(message_id, set);
