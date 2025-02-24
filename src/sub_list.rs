@@ -7,6 +7,9 @@ use std::{
 
 type MessageId = usize;
 
+///
+/// Container for subscriptions
+/// 
 pub struct SubscriptionManager {
     identifier_map: HashMap<MessageId, HashSet<SocketAddr>>,
 }
@@ -27,11 +30,11 @@ impl SubscriptionManager {
     pub fn add_subscription(
         &mut self,
         message_id: MessageId,
-        process: SocketAddr,
+        address: SocketAddr,
     ) -> Result<(), SubListErrors> {
-        log::debug!("Adding {process} to the {message_id} subscriber list");
+        log::debug!("Adding {address} to the {message_id} subscriber list");
         if let Some(values) = self.identifier_map.get_mut(&message_id) {
-            let result = values.insert(process);
+            let result = values.insert(address);
             if !result {
                 Err(SubListErrors::SubscriptionAlreadyPresent)
             } else {
@@ -40,7 +43,7 @@ impl SubscriptionManager {
         } else {
             log::debug!("Creating {message_id} subscriber list");
             let mut set = HashSet::new();
-            set.insert(process);
+            set.insert(address);
             self.identifier_map.insert(message_id, set);
             Ok(())
         }
@@ -84,8 +87,8 @@ mod tests {
     fn test_can_add_sub() {
         let mut manager = SubscriptionManager::new();
         let message_id = 1;
-        let process = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 8080));
-        let result = manager.add_subscription(message_id, process);
+        let address = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 8080));
+        let result = manager.add_subscription(message_id, address);
 
         assert!(result.unwrap() == ());
         assert_eq!(manager.identifier_map.len(), 1);
@@ -96,11 +99,11 @@ mod tests {
     fn test_can_add_two_sub() {
         let mut manager = SubscriptionManager::new();
         let message_id = 1;
-        let process = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 8080));
-        let result = manager.add_subscription(message_id, process);
+        let address = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 8080));
+        let result = manager.add_subscription(message_id, address);
         assert!(result.is_ok());
-        let process = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 8081));
-        let result = manager.add_subscription(message_id, process);
+        let address = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 8081));
+        let result = manager.add_subscription(message_id, address);
 
         assert!(result.is_ok());
         assert_eq!(manager.identifier_map.get(&message_id).unwrap().len(), 2);
@@ -111,11 +114,11 @@ mod tests {
     fn test_error_duplicate_sub() {
         let mut manager = SubscriptionManager::new();
         let message_id = 1;
-        let process = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 8080));
-        let result = manager.add_subscription(message_id, process);
+        let address = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 8080));
+        let result = manager.add_subscription(message_id, address);
         assert!(result.is_ok());
-        let process = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 8080));
-        let result = manager.add_subscription(message_id, process);
+        let address = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 8080));
+        let result = manager.add_subscription(message_id, address);
 
         assert!(result.is_err());
         assert_eq!(
@@ -130,13 +133,13 @@ mod tests {
     fn test_get_subscriber() {
         let mut manager = SubscriptionManager::new();
         let message_id = 1;
-        let process = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 8080));
-        let result = manager.add_subscription(message_id, process);
+        let address = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 8080));
+        let result = manager.add_subscription(message_id, address);
         assert!(result.is_ok());
 
         let result = manager.get_subscribers(message_id);
         assert!(result.is_ok());
-        assert!(result.unwrap().contains(&&process));
+        assert!(result.unwrap().contains(&&address));
     }
 
     /// Verifies that an error is returned when get_subscribers is called with an ID with no subscribers

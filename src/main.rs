@@ -6,5 +6,5 @@ fn main() {
 
     log::info!("Started up the server");
     let config = setup_server("./configs/configs.json").unwrap();
-    start_listening(config).unwrap();
+    _ = start_listening(config);
 }

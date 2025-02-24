@@ -2,7 +2,9 @@ use std::{error::Error, fmt::Display};
 
 #[derive(Debug, PartialEq)]
 pub enum SubListErrors {
+    /// This subscription was already present in the list
     SubscriptionAlreadyPresent,
+    /// The message ID is not present in the list
     NoSubscriptionFound,
 }
 
