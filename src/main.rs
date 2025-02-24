@@ -1,4 +1,4 @@
-use pub_sub_server::{setup_server, start_listening};
+use rpss::{setup_server, start_listening};
 use simple_logger::SimpleLogger;
 
 fn main() {

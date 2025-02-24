@@ -1,5 +1,5 @@
 [package]
-name = "pub_sub_server"
+name = "rpss"
 version = "0.1.0"
 edition = "2021"
 

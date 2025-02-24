@@ -18,7 +18,7 @@ use sub_list::SubscriptionManager;
 /// 
 /// ## Example:
 /// ```no_run
-/// # use pub_sub_server::*;
+/// # use rpss::*;
 /// let config = setup_server("configs/configs.json").unwrap();
 /// start_listening(config);
 /// ```
