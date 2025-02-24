@@ -2,9 +2,13 @@ use std::{error::Error, fmt::Display};
 
 #[derive(Debug, PartialEq)]
 pub enum SetupErrors {
+    /// The file cannot be read
     CannotReadConfigFile,
+    /// The file cannot be found
     CannotFindConfigFile,
+    /// The config file does not have the correct keys
     InvalidConfigFileKey,
+    /// The address is not formatted properly
     InvalidSocketAddress,
 }
 
